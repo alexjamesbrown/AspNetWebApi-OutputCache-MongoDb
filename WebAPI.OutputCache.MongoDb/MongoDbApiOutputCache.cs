@@ -22,7 +22,7 @@ namespace WebAPI.OutputCache.MongoDb
 
         public T Get<T>(string key) where T : class
         {
-            throw new NotImplementedException();
+            return _mongoCollection.FindOneAs<T>(Query.EQ("key", new BsonString(key)));
         }
 
         public object Get(string key)
