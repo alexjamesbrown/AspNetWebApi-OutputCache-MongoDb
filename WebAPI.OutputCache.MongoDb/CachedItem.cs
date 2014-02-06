@@ -21,10 +21,5 @@ namespace WebAPI.OutputCache.MongoDb
 
         [BsonElement("value")]
         public string Value { get; set; }
-
-        public T Deserialize<T>()
-        {
-            return JsonSerializer.DeserializeFromString<T>(Value);
-        }
     }
 }

@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
+using ServiceStack.Text;
 using WebApi.OutputCache.Core.Cache;
 
 namespace WebAPI.OutputCache.MongoDb
@@ -22,9 +23,10 @@ namespace WebAPI.OutputCache.MongoDb
 
         public T Get<T>(string key) where T : class
         {
-            return _mongoCollection
-                .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)))
-                .Deserialize<T>();
+            var item = _mongoCollection
+                .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)));
+
+            return JsonSerializer.DeserializeFromString<T>(item.Value);
         }
 
         public object Get(string key)
