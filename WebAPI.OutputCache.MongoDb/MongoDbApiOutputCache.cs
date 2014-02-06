@@ -36,7 +36,7 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Remove(string key)
         {
-            throw new NotImplementedException();
+            _mongoCollection.Remove(Query.EQ("key", new BsonString(key)));
         }
 
         public bool Contains(string key)
