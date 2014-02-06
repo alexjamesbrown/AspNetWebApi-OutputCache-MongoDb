@@ -22,7 +22,9 @@ namespace WebAPI.OutputCache.MongoDb
 
         public T Get<T>(string key) where T : class
         {
-            return _mongoCollection.FindOneAs<T>(Query.EQ("key", new BsonString(key)));
+            return _mongoCollection
+                .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)))
+                .Deserialize<T>();
         }
 
         public object Get(string key)
