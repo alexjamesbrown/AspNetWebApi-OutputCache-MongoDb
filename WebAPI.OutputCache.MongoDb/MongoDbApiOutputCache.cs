@@ -11,9 +11,9 @@ namespace WebAPI.OutputCache.MongoDb
     {
         private readonly MongoCollection _mongoCollection;
 
-        public MongoDbApiOutputCache(MongoCollection mongoCollection)
+        public MongoDbApiOutputCache(MongoDatabase mongoDatabase)
         {
-            _mongoCollection = mongoCollection;
+            _mongoCollection = mongoDatabase.GetCollection("cache");
         }
 
         public void RemoveStartsWith(string key)

@@ -18,7 +18,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests
             MongoDatabase = server.GetDatabase(mongoUrl.DatabaseName);
             MongoCollection = MongoDatabase.GetCollection("cache");
 
-            MongoDbApiOutputCache = new MongoDbApiOutputCache(MongoCollection);
+            MongoDbApiOutputCache = new MongoDbApiOutputCache(MongoDatabase);
         }
     }
 }
