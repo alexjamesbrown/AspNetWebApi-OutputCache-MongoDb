@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContainsTests.cs" />
     <Compile Include="RemoveTests.cs" />
     <Compile Include="GetGenericTests.cs" />
     <Compile Include="MongoDbApiOutputCacheTestBase.cs" />

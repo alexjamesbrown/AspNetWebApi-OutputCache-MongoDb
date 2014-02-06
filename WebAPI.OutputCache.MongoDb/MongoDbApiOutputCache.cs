@@ -41,7 +41,9 @@ namespace WebAPI.OutputCache.MongoDb
 
         public bool Contains(string key)
         {
-            throw new NotImplementedException();
+            return _mongoCollection
+                .FindAs<CachedItem>(Query.EQ("key", new BsonString(key)))
+                .Count() == 1;
         }
 
         public void Add(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
