@@ -13,7 +13,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests
         {
             _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
 
-            MongoCollection.Insert(new CachedItem(_user.Id.ToString(), _user));
+            MongoCollection.Insert(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddHours(1)));
         }
 
         [TearDown]

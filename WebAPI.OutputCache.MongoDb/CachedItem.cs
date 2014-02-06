@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using ServiceStack.Text;
 
 namespace WebAPI.OutputCache.MongoDb
@@ -10,10 +12,11 @@ namespace WebAPI.OutputCache.MongoDb
         {
         }
 
-        public CachedItem(string key, object value)
+        public CachedItem(string key, object value, DateTimeOffset expiration)
         {
             Key = key;
             Value = JsonSerializer.SerializeToString(value);
+            Expiration = expiration;
         }
 
         [BsonElement("key")]
@@ -21,5 +24,8 @@ namespace WebAPI.OutputCache.MongoDb
 
         [BsonElement("value")]
         public string Value { get; set; }
+
+        [BsonElement("expiration")]
+        public DateTimeOffset Expiration { get; set; }
     }
 }

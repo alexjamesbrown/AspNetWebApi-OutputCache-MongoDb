@@ -17,8 +17,8 @@ namespace WebAPI.OutputCache.MongoDb.Tests
             _user1 = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
             _user2 = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
 
-            MongoCollection.Insert(new CachedItem(_user1.Id.ToString(), _user1));
-            MongoCollection.Insert(new CachedItem(_user2.Id.ToString(), _user2));
+            MongoCollection.Insert(new CachedItem(_user1.Id.ToString(), _user1, DateTime.Now.AddHours(1)));
+            MongoCollection.Insert(new CachedItem(_user2.Id.ToString(), _user2, DateTime.Now.AddHours(1)));
         }
 
         [TearDown]

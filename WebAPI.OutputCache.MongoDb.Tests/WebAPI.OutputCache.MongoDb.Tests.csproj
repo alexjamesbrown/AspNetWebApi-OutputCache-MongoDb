@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddTests.cs" />
     <Compile Include="ContainsTests.cs" />
     <Compile Include="RemoveTests.cs" />
     <Compile Include="GetGenericTests.cs" />

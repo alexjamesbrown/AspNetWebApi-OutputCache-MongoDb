@@ -48,7 +48,9 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Add(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
         {
-            throw new NotImplementedException();
+            var cachedItem = new CachedItem(key, o, expiration);
+
+            _mongoCollection.Insert(cachedItem);
         }
     }
 }
