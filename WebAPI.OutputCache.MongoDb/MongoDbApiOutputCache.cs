@@ -3,8 +3,8 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using ServiceStack.Text;
 using WebApi.OutputCache.Core.Cache;
+using JsonSerializer = ServiceStack.Text.JsonSerializer;
 
 namespace WebAPI.OutputCache.MongoDb
 {
@@ -59,7 +59,10 @@ namespace WebAPI.OutputCache.MongoDb
 
         public object Get(string key)
         {
-            throw new NotImplementedException();
+            var item = MongoCollection
+                .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)));
+
+            return JsonSerializer.DeserializeFromString<object>(item.Value);
         }
 
         public void Remove(string key)

@@ -35,6 +35,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="MongoDB.Bson">
       <HintPath>..\packages\mongocsharpdriver.1.8.3\lib\net35\MongoDB.Bson.dll</HintPath>
     </Reference>
@@ -75,6 +76,7 @@
     <Compile Include="Methods\AddTests.cs" />
     <Compile Include="Methods\ContainsTests.cs" />
     <Compile Include="Methods\GetGenericTests.cs" />
+    <Compile Include="Methods\GetTests.cs" />
     <Compile Include="Methods\RemoveStartsWithTests.cs" />
     <Compile Include="Methods\RemoveTests.cs" />
     <Compile Include="Methods\UserFixture.cs" />
