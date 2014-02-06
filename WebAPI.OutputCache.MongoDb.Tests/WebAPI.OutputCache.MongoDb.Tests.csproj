@@ -52,14 +52,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddTests.cs" />
-    <Compile Include="ContainsTests.cs" />
-    <Compile Include="RemoveTests.cs" />
-    <Compile Include="GetGenericTests.cs" />
+    <Compile Include="Methods\AddTests.cs" />
+    <Compile Include="Methods\ContainsTests.cs" />
+    <Compile Include="Methods\GetGenericTests.cs" />
+    <Compile Include="Methods\RemoveStartsWithTests.cs" />
+    <Compile Include="Methods\RemoveTests.cs" />
+    <Compile Include="Methods\UserFixture.cs" />
     <Compile Include="MongoDbApiOutputCacheTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoveStartsWithTests.cs" />
-    <Compile Include="UserFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

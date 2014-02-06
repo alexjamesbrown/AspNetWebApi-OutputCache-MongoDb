@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace WebAPI.OutputCache.MongoDb.Tests
+namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
     [TestFixture]
     public class GetGenericTests : MongoDbApiOutputCacheTestsBase

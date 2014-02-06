@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebAPI.OutputCache.MongoDb.Tests
+namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
     public class UserFixture
     {

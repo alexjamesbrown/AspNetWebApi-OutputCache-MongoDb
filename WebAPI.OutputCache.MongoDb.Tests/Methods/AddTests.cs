@@ -2,7 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace WebAPI.OutputCache.MongoDb.Tests
+namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
     [TestFixture]
     public class AddTests : MongoDbApiOutputCacheTestsBase
