@@ -59,6 +59,7 @@
     <Compile Include="Methods\RemoveTests.cs" />
     <Compile Include="Methods\UserFixture.cs" />
     <Compile Include="MongoDbApiOutputCacheTestBase.cs" />
+    <Compile Include="MongoDbApiOutputCacheTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

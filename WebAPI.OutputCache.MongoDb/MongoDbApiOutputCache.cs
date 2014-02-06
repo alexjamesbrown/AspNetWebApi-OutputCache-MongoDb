@@ -9,21 +9,25 @@ namespace WebAPI.OutputCache.MongoDb
 {
     public class MongoDbApiOutputCache : IApiOutputCache
     {
-        private readonly MongoCollection _mongoCollection;
+        internal readonly MongoCollection MongoCollection;
 
         public MongoDbApiOutputCache(MongoDatabase mongoDatabase)
+            : this(mongoDatabase, "cache")
+        { }
+
+        public MongoDbApiOutputCache(MongoDatabase mongoDatabase, string cache)
         {
-            _mongoCollection = mongoDatabase.GetCollection("cache");
+            MongoCollection = mongoDatabase.GetCollection(cache);
         }
 
         public void RemoveStartsWith(string key)
         {
-            _mongoCollection.Remove(Query.Matches("key", new BsonRegularExpression("^" + key)));
+            MongoCollection.Remove(Query.Matches("key", new BsonRegularExpression("^" + key)));
         }
 
         public T Get<T>(string key) where T : class
         {
-            var item = _mongoCollection
+            var item = MongoCollection
                 .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)));
 
             return JsonSerializer.DeserializeFromString<T>(item.Value);
@@ -36,12 +40,12 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Remove(string key)
         {
-            _mongoCollection.Remove(Query.EQ("key", new BsonString(key)));
+            MongoCollection.Remove(Query.EQ("key", new BsonString(key)));
         }
 
         public bool Contains(string key)
         {
-            return _mongoCollection
+            return MongoCollection
                 .FindAs<CachedItem>(Query.EQ("key", new BsonString(key)))
                 .Count() == 1;
         }
@@ -50,7 +54,7 @@ namespace WebAPI.OutputCache.MongoDb
         {
             var cachedItem = new CachedItem(key, o, expiration);
 
-            _mongoCollection.Insert(cachedItem);
+            MongoCollection.Insert(cachedItem);
         }
     }
 }
