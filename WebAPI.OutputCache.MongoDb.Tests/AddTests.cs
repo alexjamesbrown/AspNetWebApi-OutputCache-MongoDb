@@ -12,15 +12,9 @@ namespace WebAPI.OutputCache.MongoDb.Tests
         [SetUp]
         public void SetUp()
         {
-            _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
-
-            MongoCollection.Insert(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddHours(1)));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
             MongoCollection.RemoveAll();
+
+            _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
         }
 
         [Test]
@@ -51,9 +45,9 @@ namespace WebAPI.OutputCache.MongoDb.Tests
 
             MongoDbApiOutputCache.Add(_user.Id.ToString(), _user, expiration);
 
-            var item = MongoCollection.FindAllAs<CachedItem>().FirstOrDefault();
+            var item = MongoCollection.FindOneAs<CachedItem>();
 
-            Assert.That(item.Expiration, Is.EqualTo(expiration));
+            Assert.That(DateTimeOffset.Compare(item.Expiration, expiration), Is.EqualTo(0));
         }
     }
 }
