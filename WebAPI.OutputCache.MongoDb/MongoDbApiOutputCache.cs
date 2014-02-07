@@ -32,6 +32,11 @@ namespace WebAPI.OutputCache.MongoDb
         public MongoDbApiOutputCache(MongoDatabase mongoDatabase, string cacheCollectionName)
         {
             MongoCollection = mongoDatabase.GetCollection(cacheCollectionName);
+
+            MongoCollection.EnsureIndex(
+                IndexKeys.Ascending("expireAt"),
+                IndexOptions.SetTimeToLive(TimeSpan.FromMilliseconds(0))
+                );
         }
 
         public void RemoveStartsWith(string key)
