@@ -1,5 +1,6 @@
 ﻿using System;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using ServiceStack.Text;
@@ -14,6 +15,19 @@ namespace WebAPI.OutputCache.MongoDb
         public MongoDbApiOutputCache(MongoDatabase mongoDatabase)
             : this(mongoDatabase, "cache")
         { }
+
+        static MongoDbApiOutputCache()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(CachedItem)))
+                BsonClassMap.RegisterClassMap<CachedItem>(cm =>
+                {
+                    cm.MapIdField(x => x.Key);
+                    cm.MapProperty(x => x.Value).SetElementName("value");
+                    cm.MapProperty(x => x.Expiration).SetElementName("expiration");
+
+                    cm.SetIgnoreExtraElements(true);
+                });
+        }
 
         public MongoDbApiOutputCache(MongoDatabase mongoDatabase, string cache)
         {
