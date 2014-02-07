@@ -29,9 +29,9 @@ namespace WebAPI.OutputCache.MongoDb
                 });
         }
 
-        public MongoDbApiOutputCache(MongoDatabase mongoDatabase, string cache)
+        public MongoDbApiOutputCache(MongoDatabase mongoDatabase, string cacheCollectionName)
         {
-            MongoCollection = mongoDatabase.GetCollection(cache);
+            MongoCollection = mongoDatabase.GetCollection(cacheCollectionName);
         }
 
         public void RemoveStartsWith(string key)
