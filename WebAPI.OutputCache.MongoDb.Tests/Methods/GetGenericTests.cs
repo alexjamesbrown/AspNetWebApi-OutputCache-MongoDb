@@ -1,4 +1,6 @@
 ﻿using System;
+using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 using NUnit.Framework;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
@@ -44,6 +46,19 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             var result = MongoDbApiOutputCache.Get<UserFixture>("expired-item");
 
             Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void item_is_deleted_from_database_if_expired()
+        {
+            //add an item that expires 1 hour ago
+            MongoCollection.Insert(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
+
+            var result = MongoDbApiOutputCache.Get<UserFixture>("expired-item");
+            var resultFromMongo = MongoCollection.FindOneAs<CachedItem>(Query.EQ("_id", new BsonString("expired-item")));
+
+            Assert.That(result, Is.Null);
+            Assert.That(resultFromMongo, Is.Null);
         }
     }
 }

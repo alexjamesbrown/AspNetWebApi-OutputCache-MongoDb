@@ -35,11 +35,6 @@ namespace WebAPI.OutputCache.MongoDb
                 : JsonSerializer.DeserializeFromString<T>(item.Value);
         }
 
-        private static bool CheckItemExpired(CachedItem item)
-        {
-            return item.Expiration < DateTime.Now;
-        }
-
         public object Get(string key)
         {
             throw new NotImplementedException();
@@ -62,6 +57,17 @@ namespace WebAPI.OutputCache.MongoDb
             var cachedItem = new CachedItem(key, o, expiration);
 
             MongoCollection.Save(cachedItem);
+        }
+
+        private bool CheckItemExpired(CachedItem item)
+        {
+            if (item.Expiration >= DateTime.Now)
+                return false;
+
+            //does the work of TTL collections early - TTL is only "fired" once a minute or so
+            MongoCollection.Remove(Query.EQ("_id", item.Key));
+
+            return true;
         }
     }
 }
