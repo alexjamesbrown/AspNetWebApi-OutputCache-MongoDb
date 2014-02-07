@@ -9,6 +9,9 @@ Usage
 
 Simply create an instance of `MongoDbApiOutputCache`
 
+`MongoDbApiOutputCache` takes a `MongoDatabase` in the ctor, so you can pass this in via IoC.  
+You can also specify your cache collection name. Default is "cache".
+
 From the [AspNetWebApi-OutputCache readme](https://github.com/filipw/AspNetWebApi-OutputCache/wiki):
 >
 You can register your implementation using a handy *GlobalConfiguration* extension method:
