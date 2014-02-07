@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
@@ -9,9 +10,9 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         [SetUp]
         public void SetUp()
         {
-            var item1 = new CachedItem { Key = "apples-1", Value = "Golden Delicious" };
-            var item2 = new CachedItem { Key = "apples-2", Value = "Pink Lady" };
-            var item3 = new CachedItem { Key = "dogs-1", Value = "Jack Russell" };
+            var item1 = new CachedItem("apples-1", "Golden Delicious", DateTime.Now.AddHours(1));
+            var item2 = new CachedItem("apples-2", "Pink Lady", DateTime.Now.AddHours(1));
+            var item3 = new CachedItem("dogs-1", "Jack Russell", DateTime.Now.AddHours(1));
 
             MongoCollection.Insert(item1);
             MongoCollection.Insert(item2);

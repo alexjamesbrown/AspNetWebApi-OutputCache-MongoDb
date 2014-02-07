@@ -68,7 +68,7 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Add(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
         {
-            var cachedItem = new CachedItem(key, o, expiration);
+            var cachedItem = new CachedItem(key, o, expiration.DateTime);
 
             MongoCollection.Save(cachedItem);
         }

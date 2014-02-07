@@ -5,15 +5,11 @@ namespace WebAPI.OutputCache.MongoDb
 {
     public class CachedItem
     {
-        public CachedItem()
-        {
-        }
-
-        public CachedItem(string key, object value, DateTimeOffset expiration)
+        public CachedItem(string key, object value, DateTime expireAt)
         {
             Key = key;
             Value = JsonSerializer.SerializeToString(value);
-            ExpireAt = expiration.DateTime;
+            ExpireAt = expireAt;
         }
 
         public string Key { get; set; }
