@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using ServiceStack.Text;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
@@ -25,13 +26,16 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         [Test]
         public void retrieves_item_from_cache()
         {
-            dynamic instance = MongoDbApiOutputCache.Get(_user.Id.ToString());
+            var instance = MongoDbApiOutputCache.Get(_user.Id.ToString()) as JsonObject;
 
-            Assert.That(instance.Id, Is.EqualTo(_user.Id));
-            Assert.That(instance.Name, Is.EqualTo(_user.Name));
-            Assert.That(instance.DateOfBirth.Day, Is.EqualTo(_user.DateOfBirth.Day));
-            Assert.That(instance.DateOfBirth.Month, Is.EqualTo(_user.DateOfBirth.Month));
-            Assert.That(instance.DateOfBirth.Year, Is.EqualTo(_user.DateOfBirth.Year));
+            //not sure this is correct
+            //http://stackoverflow.com/a/21603948/131809
+
+            Assert.That(instance.Get<Guid>("Id"), Is.EqualTo(_user.Id));
+            Assert.That(instance.Get<string>("Name"), Is.EqualTo(_user.Name));
+            Assert.That(instance.Get<DateTime>("DateOfBirth").Day, Is.EqualTo(_user.DateOfBirth.Day));
+            Assert.That(instance.Get<DateTime>("DateOfBirth").Month, Is.EqualTo(_user.DateOfBirth.Month));
+            Assert.That(instance.Get<DateTime>("DateOfBirth").Year, Is.EqualTo(_user.DateOfBirth.Year));
         }
     }
 }
