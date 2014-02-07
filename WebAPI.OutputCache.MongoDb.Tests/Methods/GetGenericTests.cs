@@ -38,6 +38,14 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
+        public void returns_null_if_item_not_in_collection()
+        {
+            var result = MongoDbApiOutputCache.Get<UserFixture>("unknown key");
+
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
         public void does_not_return_item_that_has_expired()
         {
             //add an item that expires 1 hour ago
