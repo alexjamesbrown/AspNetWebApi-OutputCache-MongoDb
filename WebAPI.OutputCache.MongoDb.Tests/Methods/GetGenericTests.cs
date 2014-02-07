@@ -34,5 +34,16 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             Assert.That(result.DateOfBirth.Month, Is.EqualTo(_user.DateOfBirth.Month));
             Assert.That(result.DateOfBirth.Year, Is.EqualTo(_user.DateOfBirth.Year));
         }
+
+        [Test]
+        public void does_not_return_item_that_has_expired()
+        {
+            //add an item that expires 1 hour ago
+            MongoCollection.Insert(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
+
+            var result = MongoDbApiOutputCache.Get<UserFixture>("expired-item");
+
+            Assert.That(result, Is.Null);
+        }
     }
 }

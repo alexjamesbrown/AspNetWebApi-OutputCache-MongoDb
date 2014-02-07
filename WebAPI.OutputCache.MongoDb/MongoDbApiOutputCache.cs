@@ -30,7 +30,14 @@ namespace WebAPI.OutputCache.MongoDb
             var item = MongoCollection
                 .FindOneAs<CachedItem>(Query.EQ("_id", new BsonString(key)));
 
-            return JsonSerializer.DeserializeFromString<T>(item.Value);
+            return CheckItemExpired(item)
+                ? null
+                : JsonSerializer.DeserializeFromString<T>(item.Value);
+        }
+
+        private static bool CheckItemExpired(CachedItem item)
+        {
+            return item.Expiration < DateTime.Now;
         }
 
         public object Get(string key)
