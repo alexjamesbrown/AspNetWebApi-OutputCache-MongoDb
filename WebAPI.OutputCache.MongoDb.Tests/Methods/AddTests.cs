@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using ServiceStack.Text;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
@@ -48,6 +49,24 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             var item = MongoCollection.FindOneAs<CachedItem>();
 
             Assert.That(DateTimeOffset.Compare(item.Expiration, expiration), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void adding_item_with_duplicate_key_updates_original()
+        {
+            MongoDbApiOutputCache.Add("user", _user, DateTime.Now.AddSeconds(60));
+
+            var differentUser = new UserFixture { Name = "Simon" };
+
+            MongoDbApiOutputCache.Add("user", differentUser, DateTime.Now.AddSeconds(60));
+
+            Assert.That(MongoCollection.Count(), Is.EqualTo(1));
+
+            var item = JsonSerializer.DeserializeFromString<UserFixture>(MongoCollection.FindOneAs<CachedItem>().Value);
+
+            Assert.That(item, Is.Not.Null);
+            Assert.That(item.Id, Is.EqualTo(differentUser.Id));
+            Assert.That(item.Name, Is.EqualTo(differentUser.Name));
         }
     }
 }

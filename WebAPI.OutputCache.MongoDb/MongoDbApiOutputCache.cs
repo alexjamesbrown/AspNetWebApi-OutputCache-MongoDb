@@ -22,13 +22,13 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void RemoveStartsWith(string key)
         {
-            MongoCollection.Remove(Query.Matches("key", new BsonRegularExpression("^" + key)));
+            MongoCollection.Remove(Query.Matches("_id", new BsonRegularExpression("^" + key)));
         }
 
         public T Get<T>(string key) where T : class
         {
             var item = MongoCollection
-                .FindOneAs<CachedItem>(Query.EQ("key", new BsonString(key)));
+                .FindOneAs<CachedItem>(Query.EQ("_id", new BsonString(key)));
 
             return JsonSerializer.DeserializeFromString<T>(item.Value);
         }
@@ -40,13 +40,13 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Remove(string key)
         {
-            MongoCollection.Remove(Query.EQ("key", new BsonString(key)));
+            MongoCollection.Remove(Query.EQ("_id", new BsonString(key)));
         }
 
         public bool Contains(string key)
         {
             return MongoCollection
-                .FindAs<CachedItem>(Query.EQ("key", new BsonString(key)))
+                .FindAs<CachedItem>(Query.EQ("_id", new BsonString(key)))
                 .Count() == 1;
         }
 
@@ -54,7 +54,7 @@ namespace WebAPI.OutputCache.MongoDb
         {
             var cachedItem = new CachedItem(key, o, expiration);
 
-            MongoCollection.Insert(cachedItem);
+            MongoCollection.Save(cachedItem);
         }
     }
 }

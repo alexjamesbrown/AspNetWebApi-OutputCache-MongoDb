@@ -1,5 +1,4 @@
 ﻿using System;
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using ServiceStack.Text;
 
@@ -19,7 +18,7 @@ namespace WebAPI.OutputCache.MongoDb
             Expiration = expiration;
         }
 
-        [BsonElement("key")]
+        [BsonId]
         public string Key { get; set; }
 
         [BsonElement("value")]
