@@ -47,8 +47,19 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             MongoDbApiOutputCache.Add(_user.Id.ToString(), _user, expiration);
 
             var item = MongoCollection.FindOneAs<CachedItem>();
+            var itemExpireAt = item.ExpireAt;
 
-            Assert.That(DateTimeOffset.Compare(item.Expiration, expiration), Is.EqualTo(0));
+            //todo: would be good to check they are the same value.. without this rubbish!
+            //something like:
+            //Assert.That(DateTime.Compare(item.ExpireAt, new DateTime(expiration.Ticks)), Is.EqualTo(0));
+
+            Assert.That(expiration.Day, Is.EqualTo(itemExpireAt.Day));
+            Assert.That(expiration.Month, Is.EqualTo(itemExpireAt.Month));
+            Assert.That(expiration.Year, Is.EqualTo(itemExpireAt.Year));
+            Assert.That(expiration.Hour, Is.EqualTo(itemExpireAt.Hour));
+            Assert.That(expiration.Minute, Is.EqualTo(itemExpireAt.Minute));
+            Assert.That(expiration.Second, Is.EqualTo(itemExpireAt.Second));
+            Assert.That(expiration.Millisecond, Is.EqualTo(itemExpireAt.Millisecond));
         }
 
         [Test]

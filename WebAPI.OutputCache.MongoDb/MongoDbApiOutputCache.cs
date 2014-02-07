@@ -23,7 +23,7 @@ namespace WebAPI.OutputCache.MongoDb
                 {
                     cm.MapIdField(x => x.Key);
                     cm.MapProperty(x => x.Value).SetElementName("value");
-                    cm.MapProperty(x => x.Expiration).SetElementName("expiration");
+                    cm.MapProperty(x => x.ExpireAt).SetElementName("expireAt");
 
                     cm.SetIgnoreExtraElements(true);
                 });
@@ -75,7 +75,7 @@ namespace WebAPI.OutputCache.MongoDb
 
         private bool CheckItemExpired(CachedItem item)
         {
-            if (item.Expiration >= DateTime.Now)
+            if (item.ExpireAt >= DateTime.Now)
                 return false;
 
             //does the work of TTL collections early - TTL is only "fired" once a minute or so

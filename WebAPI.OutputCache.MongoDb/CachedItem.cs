@@ -13,13 +13,13 @@ namespace WebAPI.OutputCache.MongoDb
         {
             Key = key;
             Value = JsonSerializer.SerializeToString(value);
-            Expiration = expiration;
+            ExpireAt = expiration.DateTime;
         }
 
         public string Key { get; set; }
 
         public string Value { get; set; }
 
-        public DateTimeOffset Expiration { get; set; }
+        public DateTime ExpireAt { get; set; }
     }
 }
