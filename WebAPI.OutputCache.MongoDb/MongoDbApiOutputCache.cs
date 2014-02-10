@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -81,6 +82,10 @@ namespace WebAPI.OutputCache.MongoDb
 
         public void Add(string key, object o, DateTimeOffset expiration, string dependsOnKey = null)
         {
+            if (key.Length > 256) //saves calling getByteCount if we know it could be less than 1024 bytes
+                if (Encoding.UTF8.GetByteCount(key) >= 1024)
+                    throw new KeyTooLongException();
+
             var cachedItem = new CachedItem(key, o, expiration.DateTime);
 
             MongoCollection.Save(cachedItem);

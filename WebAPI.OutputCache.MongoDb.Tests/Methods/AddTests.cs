@@ -79,5 +79,18 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             Assert.That(item.Id, Is.EqualTo(differentUser.Id));
             Assert.That(item.Name, Is.EqualTo(differentUser.Name));
         }
+
+        [Test]
+        public void adding_item_with_long_key_throws_exception()
+        {
+            var key = "";
+
+            for (var i = 0; i < 100; i++)
+                key += Guid.NewGuid().ToString();
+
+            var exception = Assert.Throws<KeyTooLongException>(() => MongoDbApiOutputCache.Add(key, _user, DateTime.Now.AddSeconds(60)));
+
+            Assert.That(exception.Message, Is.EqualTo("The key provided was over the 1024 bytes maximum for an indexed MongoDb field"));
+        }
     }
 }
