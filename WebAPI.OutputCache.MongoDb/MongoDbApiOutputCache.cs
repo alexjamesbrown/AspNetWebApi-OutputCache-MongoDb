@@ -3,7 +3,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using ServiceStack.Text;
 using WebApi.OutputCache.Core.Cache;
 using JsonSerializer = ServiceStack.Text.JsonSerializer;
 
@@ -25,6 +24,7 @@ namespace WebAPI.OutputCache.MongoDb
                     cm.MapIdField(x => x.Key);
                     cm.MapProperty(x => x.Value).SetElementName("value");
                     cm.MapProperty(x => x.ExpireAt).SetElementName("expireAt");
+                    cm.MapField(x => x.ValueType).SetElementName("valueType");
 
                     cm.SetIgnoreExtraElements(true);
                 });
@@ -63,10 +63,8 @@ namespace WebAPI.OutputCache.MongoDb
             var item = MongoCollection
                 .FindOneAs<CachedItem>(Query.EQ("_id", new BsonString(key)));
 
-            var i = JsonObject.Parse(item.Value);
-
-            var xxxxxx = i.Get<Guid>("Id");
-            return i;
+            var type = Type.GetType(item.ValueType);
+            return JsonSerializer.DeserializeFromString(item.Value, type);
         }
 
         public void Remove(string key)

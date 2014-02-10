@@ -1,5 +1,4 @@
 ﻿using System;
-using MongoDB.Bson.Serialization.Attributes;
 using ServiceStack.Text;
 
 namespace WebAPI.OutputCache.MongoDb
@@ -10,13 +9,15 @@ namespace WebAPI.OutputCache.MongoDb
         {
             Key = key;
             Value = JsonSerializer.SerializeToString(value);
+            ValueType = value.GetType().AssemblyQualifiedName;
+
             ExpireAt = expireAt;
         }
 
-        [BsonId]
         public string Key { get; set; }
 
         public string Value { get; set; }
+        public string ValueType { get; private set; }
 
         public DateTime ExpireAt { get; set; }
     }
