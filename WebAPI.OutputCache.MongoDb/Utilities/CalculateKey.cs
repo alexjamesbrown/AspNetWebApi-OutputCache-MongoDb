@@ -4,18 +4,28 @@ using Murmur;
 
 namespace WebAPI.OutputCache.MongoDb.Utilities
 {
+    /// <summary>
+    /// Utility to calculate a key less than the 1024 byte maximum
+    /// </summary>
     public class CalculateKey
     {
+        /// <summary>
+        ///Returns the original key if already less than 1024 bytes, or hashes, then returns
+        /// </summary>
+        /// <param name="key">The original key</param>
+        /// <param name="prefix">Optional prefix - won't be hashed</param>
+        /// <returns></returns>
         public string Calculate(string key, string prefix = null)
         {
             if (prefix == null)
                 prefix = string.Empty;
 
-            if ((key.Length + prefix.Length) < 130)
+            if (key.Length < 256)
                 return key;
 
             using (var murmur128 = MurmurHash.Create128(managed: false))
-                return string.Concat(prefix, Convert.ToBase64String(murmur128.ComputeHash(GenerateStreamFromString(key))));
+                return string.Concat(prefix,
+                    Convert.ToBase64String(murmur128.ComputeHash(GenerateStreamFromString(key))));
         }
 
         internal static Stream GenerateStreamFromString(string s)
