@@ -1,5 +1,5 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
@@ -13,17 +13,17 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         {
             _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
 
-            MongoCollection.Insert(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddSeconds(60)));
+            MongoCollection.InsertOne(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddSeconds(60)));
         }
 
         [TearDown]
         public void TearDown()
         {
-            MongoCollection.RemoveAll();
+            MongoDatabase.DropCollection(MongoCollection.CollectionNamespace.CollectionName);
         }
 
         [Test]
-        public void retrieves_item_from_cache()
+        public void Retrieves_item_from_cache()
         {
             var instance = MongoDbApiOutputCache.Get(_user.Id.ToString()) as UserFixture;
 

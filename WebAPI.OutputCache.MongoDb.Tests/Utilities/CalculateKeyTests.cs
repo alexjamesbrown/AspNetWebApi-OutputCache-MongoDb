@@ -1,7 +1,7 @@
-﻿using System;
-using System.Security.Cryptography;
-using Murmur;
+﻿using Murmur;
 using NUnit.Framework;
+using System;
+using System.Security.Cryptography;
 using WebAPI.OutputCache.MongoDb.Utilities;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
@@ -18,7 +18,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
         }
 
         [Test]
-        public void returns_plain_text_key_if_key_length_is_less_than_130()
+        public void Returns_plain_text_key_if_key_length_is_less_than_130()
         {
             //according to this http://stackoverflow.com/a/9533324/131809
             //each char could be up to 6 bytes
@@ -34,7 +34,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
         }
 
         [Test]
-        public void returns_hashed_key_if_passed_in_string_is_greater_than_130()
+        public void Returns_hashed_key_if_passed_in_string_is_greater_than_130()
         {
             var key = "";
 
@@ -50,7 +50,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
         }
 
         [Test]
-        public void calculates_different_key_for_different_values()
+        public void Calculates_different_key_for_different_values()
         {
             var key1 = "";
             var key2 = "";
@@ -68,7 +68,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
         }
 
         [Test]
-        public void does_not_include_specified_prefix_in_hashed_key()
+        public void Does_not_include_specified_prefix_in_hashed_key()
         {
             var key = "";
 
@@ -77,7 +77,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Utilities
 
             var result = _calculateKey.Calculate(key, "someprefix");
 
-            Assert.That(result, Is.StringStarting("someprefix"));
+            Assert.That(result, Does.StartWith("someprefix"));
         }
     }
 }

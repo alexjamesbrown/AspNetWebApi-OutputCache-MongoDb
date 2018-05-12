@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading;
-using MongoDB.Driver.Builders;
+﻿using MongoDB.Driver;
 using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace WebAPI.OutputCache.MongoDb.Tests
 {
@@ -9,23 +9,23 @@ namespace WebAPI.OutputCache.MongoDb.Tests
     public class MongoDbApiOutputCacheTests : MongoDbApiOutputCacheTestsBase
     {
         [Test]
-        public void collection_name_is_cache_by_default()
+        public void Collection_name_is_cache_by_default()
         {
             var mongoDbApiOutputCache = new MongoDbApiOutputCache(MongoDatabase);
-            Assert.That(mongoDbApiOutputCache.MongoCollection.Name, Is.EqualTo("cache"));
+            Assert.That(mongoDbApiOutputCache.MongoCollection.CollectionNamespace.CollectionName, Is.EqualTo("cache"));
         }
 
         [Test]
-        public void can_specify_collection_name()
+        public void Can_specify_collection_name()
         {
             var mongoDbApiOutputCache = new MongoDbApiOutputCache(MongoDatabase, "myCache");
-            Assert.That(mongoDbApiOutputCache.MongoCollection.Name, Is.EqualTo("myCache"));
+            Assert.That(mongoDbApiOutputCache.MongoCollection.CollectionNamespace.CollectionName, Is.EqualTo("myCache"));
         }
 
         //due to the nature of the way mongodb ttl collections work this test takes over a minute to run
         //we must sleep the thread for over a minute, as the process that removes expired documents runs once a minute or so!
         [Test]
-        public void items_are_deleted_from_database_automatically_when_expired()
+        public void Items_are_deleted_from_database_automatically_when_expired()
         {
             var mongoDbApiOutputCache = new MongoDbApiOutputCache(MongoDatabase);
 
@@ -35,7 +35,9 @@ namespace WebAPI.OutputCache.MongoDb.Tests
             Thread.Sleep(61000);
 
             //get the thing directly from mongo
-            var resultDirectlyFromMongo = MongoCollection.FindOneAs<CachedItem>(Query.EQ("_id", "something"));
+            var resultDirectlyFromMongo = MongoCollection
+                .Find(x => x.Key.Equals("something"))
+                .FirstOrDefault();
 
             Assert.That(resultDirectlyFromMongo, Is.Null);
         }
