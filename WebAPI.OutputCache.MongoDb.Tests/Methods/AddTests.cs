@@ -1,7 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using NUnit.Framework;
 using ServiceStack.Text;
+using System;
+using System.Linq;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
@@ -13,45 +15,49 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         [SetUp]
         public void SetUp()
         {
-            MongoCollection.RemoveAll();
+            MongoDatabase.DropCollection(MongoCollection.CollectionNamespace.CollectionName);
 
             _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
         }
 
         [Test]
-        public void adds_item_to_cache()
+        public void Adds_item_to_cache()
         {
             MongoDbApiOutputCache.Add(_user.Id.ToString(), _user, DateTime.Now.AddSeconds(60));
 
-            var item = MongoCollection.FindAllAs<CachedItem>().FirstOrDefault();
+            var item = MongoCollection.AsQueryable().FirstOrDefault();
 
             Assert.That(item, Is.Not.Null);
         }
 
         [Test]
-        public void added_item_stored_with_supplied_key()
+        public void Added_item_stored_with_supplied_key()
         {
             var key = _user.Id.ToString();
             MongoDbApiOutputCache.Add(key, _user, DateTime.Now.AddSeconds(60));
 
-            var item = MongoCollection.FindAllAs<CachedItem>().FirstOrDefault();
+            var item = MongoCollection.AsQueryable().FirstOrDefault();
 
             Assert.That(item.Key, Is.EqualTo(key));
         }
 
         [Test]
-        public void added_item_stored_with_expiry()
+        public void Added_item_stored_with_expiry()
         {
             var expiration = DateTime.Now.AddSeconds(60);
 
             MongoDbApiOutputCache.Add(_user.Id.ToString(), _user, expiration);
 
-            var item = MongoCollection.FindOneAs<CachedItem>();
-            var itemExpireAt = item.ExpireAt;
+            //var item = MongoCollection.FindOneAs<CachedItem>();
+            var item = MongoCollection.AsQueryable().FirstOrDefault();
+            var itemExpireAt = item.ExpireAt.ToLocalTime();
 
             //todo: would be good to check they are the same value.. without this rubbish!
             //something like:
             //Assert.That(DateTime.Compare(item.ExpireAt, new DateTime(expiration.Ticks)), Is.EqualTo(0));
+
+            //note: will this work?
+            //Assert.That(itemExpireAt, Is.EqualTo(expiration).Within(1).Milliseconds);
 
             Assert.That(expiration.Day, Is.EqualTo(itemExpireAt.Day));
             Assert.That(expiration.Month, Is.EqualTo(itemExpireAt.Month));
@@ -63,7 +69,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void adding_item_with_duplicate_key_updates_original()
+        public void Adding_item_with_duplicate_key_updates_original()
         {
             MongoDbApiOutputCache.Add("user", _user, DateTime.Now.AddSeconds(60));
 
@@ -71,9 +77,9 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 
             MongoDbApiOutputCache.Add("user", differentUser, DateTime.Now.AddSeconds(60));
 
-            Assert.That(MongoCollection.Count(), Is.EqualTo(1));
+            Assert.That(MongoCollection.Count(new BsonDocument()), Is.EqualTo(1));
 
-            var item = JsonSerializer.DeserializeFromString<UserFixture>(MongoCollection.FindOneAs<CachedItem>().Value);
+            var item = JsonSerializer.DeserializeFromString<UserFixture>(MongoCollection.AsQueryable().FirstOrDefault().Value);
 
             Assert.That(item, Is.Not.Null);
             Assert.That(item.Id, Is.EqualTo(differentUser.Id));
@@ -81,7 +87,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void adding_item_with_long_key_throws_exception()
+        public void Adding_item_with_long_key_throws_exception()
         {
             var key = "";
 

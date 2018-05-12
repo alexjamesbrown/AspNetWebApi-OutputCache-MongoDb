@@ -1,6 +1,6 @@
 ﻿using System;
 using MongoDB.Bson;
-using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 using NUnit.Framework;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
@@ -15,17 +15,17 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         {
             _user = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
 
-            MongoCollection.Insert(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddHours(1)));
+            MongoCollection.InsertOne(new CachedItem(_user.Id.ToString(), _user, DateTime.Now.AddHours(1)));
         }
 
         [TearDown]
         public void TearDown()
         {
-            MongoCollection.RemoveAll();
+            MongoDatabase.DropCollection(MongoCollection.CollectionNamespace.CollectionName);
         }
 
         [Test]
-        public void retrieves_item_from_cache()
+        public void Retrieves_item_from_cache()
         {
             var result = MongoDbApiOutputCache.Get<UserFixture>(_user.Id.ToString());
 
@@ -38,7 +38,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void returns_null_if_item_not_in_collection()
+        public void Returns_null_if_item_not_in_collection()
         {
             var result = MongoDbApiOutputCache.Get<UserFixture>("unknown key");
 
@@ -46,10 +46,10 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void does_not_return_item_that_has_expired()
+        public void Does_not_return_item_that_has_expired()
         {
             //add an item that expires 1 hour ago
-            MongoCollection.Insert(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
+            MongoCollection.InsertOne(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
 
             var result = MongoDbApiOutputCache.Get<UserFixture>("expired-item");
 
@@ -57,13 +57,15 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void item_is_deleted_from_database_if_expired()
+        public void Item_is_deleted_from_database_if_expired()
         {
             //add an item that expires 1 hour ago
-            MongoCollection.Insert(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
+            MongoCollection.InsertOne(new CachedItem("expired-item", _user, DateTime.Now.AddHours(-1)));
 
             var result = MongoDbApiOutputCache.Get<UserFixture>("expired-item");
-            var resultFromMongo = MongoCollection.FindOneAs<CachedItem>(Query.EQ("_id", new BsonString("expired-item")));
+            var resultFromMongo = MongoCollection
+                .Find(x => x.Key.Equals("expired-item"))
+                .FirstOrDefault();
 
             Assert.That(result, Is.Null);
             Assert.That(resultFromMongo, Is.Null);

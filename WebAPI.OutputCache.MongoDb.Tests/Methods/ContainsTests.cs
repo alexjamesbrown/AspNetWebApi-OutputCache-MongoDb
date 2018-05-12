@@ -1,5 +1,5 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
 
 namespace WebAPI.OutputCache.MongoDb.Tests.Methods
 {
@@ -15,18 +15,18 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
             _user1 = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
             _user2 = new UserFixture { Name = "John", DateOfBirth = new DateTime(1980, 01, 23) };
 
-            MongoCollection.Insert(new CachedItem(_user1.Id.ToString(), _user1, DateTime.Now.AddHours(1)));
-            MongoCollection.Insert(new CachedItem(_user2.Id.ToString(), _user2, DateTime.Now.AddHours(1)));
+            MongoCollection.InsertOne(new CachedItem(_user1.Id.ToString(), _user1, DateTime.Now.AddHours(1)));
+            MongoCollection.InsertOne(new CachedItem(_user2.Id.ToString(), _user2, DateTime.Now.AddHours(1)));
         }
 
         [TearDown]
         public void TearDown()
         {
-            MongoCollection.RemoveAll();
+            MongoDatabase.DropCollection(MongoCollection.CollectionNamespace.CollectionName);
         }
 
         [Test]
-        public void returns_true_if_item_is_in_collection()
+        public void Returns_true_if_item_is_in_collection()
         {
             var result = MongoDbApiOutputCache.Contains(_user1.Id.ToString());
 
@@ -34,7 +34,7 @@ namespace WebAPI.OutputCache.MongoDb.Tests.Methods
         }
 
         [Test]
-        public void returns_false_if_item_is_not_in_collection()
+        public void Returns_false_if_item_is_not_in_collection()
         {
             var result = MongoDbApiOutputCache.Contains("i know this won't be there");
 
